@@ -85,11 +85,11 @@ Graph parseGraph(const std::string& filename) {
 }
 
 std::vector<Node> aStar(const Graph& graph, const Node& start, const Node& goal) {
-    std::unordered_map<Node, double, NodeHash> gScore;
-    std::unordered_map<Node, double, NodeHash> fScore;
-    std::unordered_map<Node, Node, NodeHash> cameFrom;
-    auto compare = [&](const Node& lhs, const Node& rhs) { return fScore[lhs] > fScore[rhs]; };
-    std::priority_queue<Node, std::vector<Node>, decltype(compare)> openSet(compare);
+    std::unordered_map<Node, double, NodeHash> gScore; // ~48 байт
+    std::unordered_map<Node, double, NodeHash> fScore; // ~48 байт
+    std::unordered_map<Node, Node, NodeHash> cameFrom; // ~48 байт
+    auto compare = [&](const Node& lhs, const Node& rhs) { return fScore[lhs] > fScore[rhs]; }; // 1 байт
+    std::priority_queue<Node, std::vector<Node>, decltype(compare)> openSet(compare); // ~24 байта
 
     gScore[start] = 0;
     fScore[start] = heuristic(start, goal);
@@ -129,9 +129,9 @@ std::vector<Node> aStar(const Graph& graph, const Node& start, const Node& goal)
 }
 
 std::vector<Node> bfs(const Graph& graph, const Node& start, const Node& goal) {
-    std::queue<Node> q;
-    std::unordered_map<Node, Node, NodeHash> cameFrom;
-    std::unordered_map<Node, bool, NodeHash> visited;
+    std::queue<Node> q; // ~24 байта
+    std::unordered_map<Node, Node, NodeHash> cameFrom; // ~48 байт
+    std::unordered_map<Node, bool, NodeHash> visited; // ~48 байт
 
     q.push(start);
     visited[start] = true;
@@ -166,8 +166,8 @@ std::vector<Node> bfs(const Graph& graph, const Node& start, const Node& goal) {
 }
 
 std::vector<Node> dfsUtil(const Graph& graph, const Node& current, const Node& goal,
-    std::unordered_map<Node, bool, NodeHash>& visited,
-    std::unordered_map<Node, Node, NodeHash>& cameFrom) {
+    std::unordered_map<Node, bool, NodeHash>& visited, // ~48 байт
+    std::unordered_map<Node, Node, NodeHash>& cameFrom) { // ~48 байт
     visited[current] = true;
 
     if (current == goal) {
@@ -195,17 +195,17 @@ std::vector<Node> dfsUtil(const Graph& graph, const Node& current, const Node& g
 }
 
 std::vector<Node> dfs(const Graph& graph, const Node& start, const Node& goal) {
-    std::unordered_map<Node, bool, NodeHash> visited;
-    std::unordered_map<Node, Node, NodeHash> cameFrom;
+    std::unordered_map<Node, bool, NodeHash> visited; // ~48 байт
+    std::unordered_map<Node, Node, NodeHash> cameFrom; // ~48 байт
     cameFrom[start] = Node{ -1, -1 };
     return dfsUtil(graph, start, goal, visited, cameFrom);
 }
 
 std::vector<Node> dijkstra(const Graph& graph, const Node& start, const Node& goal) {
-    std::unordered_map<Node, double, NodeHash> dist;
-    std::unordered_map<Node, Node, NodeHash> cameFrom;
-    auto compare = [&](const Node& lhs, const Node& rhs) { return dist[lhs] > dist[rhs]; };
-    std::priority_queue<Node, std::vector<Node>, decltype(compare)> pq(compare);
+    std::unordered_map<Node, double, NodeHash> dist; // ~48 байт
+    std::unordered_map<Node, Node, NodeHash> cameFrom; // ~48 байт
+    auto compare = [&](const Node& lhs, const Node& rhs) { return dist[lhs] > dist[rhs]; }; // 1 байт
+    std::priority_queue<Node, std::vector<Node>, decltype(compare)> pq(compare); // ~24 байта
 
     for (const auto& pair : graph) {
         dist[pair.first] = std::numeric_limits<double>::infinity();
