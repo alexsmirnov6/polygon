@@ -41,7 +41,7 @@ double heuristic(const Node& a, const Node& b) {
     return std::sqrt((a.lon - b.lon) * (a.lon - b.lon) + (a.lat - b.lat) * (a.lat - b.lat));
 }
 
-// Нахождение ближайшей ноды
+// РџРѕРёСЃРє Р±Р»РёР¶Р°Р№С€РµР№ РЅРѕРґС‹
 Node findClosestNode(const Graph& graph, const Node& point) {
     Node closestNode;
     double minDistance = std::numeric_limits<double>::infinity();
@@ -58,7 +58,7 @@ Node findClosestNode(const Graph& graph, const Node& point) {
     return closestNode;
 }
 
-// Парсинг из файла
+// РџР°СЂСЃРёРЅРі РіСЂР°С„Р°
 Graph parseGraph(const std::string& filename) {
     Graph graph;
     std::ifstream file(filename);
@@ -247,78 +247,78 @@ std::vector<Node> dijkstra(const Graph& graph, const Node& start, const Node& go
 int main() {
     Graph graph = parseGraph("spb_graph.txt");
 
-    Node start{ 29.922172, 59.936539 }; // Стрипбар на Невском
-    Node goal{ 30.208108, 60.057238 }; // ИТМО Кронверкский 49
+    Node start{ 30.222172, 59.936539 }; // Р Р°РЅРґРѕРјРЅР°СЏ Р»РѕРєР°С†РёСЏ
+    Node goal{ 30.308108, 59.957238 }; // РљСЂРѕРЅРІР°
 
     Node closestNode_start = findClosestNode(graph, start);
     Node closestNode_goal = findClosestNode(graph, goal);
 
-    std::cout << "Поиск пути с использованием алгоритма A*..." << std::endl;
+    std::cout << "РџРѕРёСЃРє РєСЂР°С‚С‡Р°Р№С€РµРіРѕ РїСѓС‚Рё Р°Р»РіРѕСЂРёС‚РјРѕРј A*..." << std::endl;
     clock_t startTimer1 = clock();
     auto path1 = aStar(graph, closestNode_start, closestNode_goal);
     clock_t endTimer1 = clock();
     double seconds1 = (double)(endTimer1 - startTimer1) / CLOCKS_PER_SEC;
     if (!path1.empty()) {
-        std::cout << "Путь найден:" << std::endl;
+        std::cout << "РџСѓС‚СЊ РЅР°Р№РґРµРЅ:" << std::endl;
         for (const auto& node : path1) {
             std::cout << "(" << node.lon << ", " << node.lat << ")" << std::endl;
         }
     }
     else {
-        std::cout << "Алгоритм не смог найти путь." << std::endl;
+        std::cout << "РџСѓС‚СЊ РЅРµ РЅР°Р№РґРµРЅ." << std::endl;
     }
-    std::cout << "Времени затрачено: " << seconds1 << " секунд\n" << "~~~" << std::endl;
+    std::cout << "Р—Р°С‚СЂР°С‡РµРЅРѕ " << seconds1 << " СЃРµРєСѓРЅРґ\n" << "~~~" << std::endl;
 
     
-    std::cout << "Поиск пути с использованием алгоритма Дейкстры..." << std::endl;
+    std::cout << "РџРѕРёСЃРє РєСЂР°С‚С‡Р°Р№С€РµРіРѕ РїСѓС‚Рё Р°Р»РіРѕСЂРёС‚РјРѕРј Р”РµР№РєСЃС‚СЂС‹..." << std::endl;
     clock_t startTimer2 = clock();
     auto path2 = dijkstra(graph, closestNode_start, closestNode_goal);
     clock_t endTimer2 = clock();
     double seconds2 = (double)(endTimer2 - startTimer2) / CLOCKS_PER_SEC;
     if (!path2.empty()) {
-        std::cout << "Путь найден:" << std::endl;
+        std::cout << "РџСѓС‚СЊ РЅР°Р№РґРµРЅ:" << std::endl;
         for (const auto& node : path2) {
             std::cout << "(" << node.lon << ", " << node.lat << ")\n";
         }
     }
     else {
-        std::cout << "Алгоритм не смог найти путь." << std::endl;
+        std::cout << "РџСѓС‚СЊ РЅРµ РЅР°Р№РґРµРЅ." << std::endl;
     }
-    std::cout << "Времени затрачено: " << seconds2 << " секунд\n" << "~~~" << std::endl;
+    std::cout << "Р—Р°С‚СЂР°С‡РµРЅРѕ " << seconds2 << " СЃРµРєСѓРЅРґ\n" << "~~~" << std::endl;
 
 
-    std::cout << "Поиск пути с использованием алгоритма обхода в ширину..." << std::endl;
+    std::cout << "РџРѕРёСЃРє РєСЂР°С‚С‡Р°Р№С€РµРіРѕ РїСѓС‚Рё Р°Р»РіРѕСЂРёС‚РјРѕРј РѕР±Р·РѕРґР° РІ С€РёСЂРёРЅСѓ..." << std::endl;
     clock_t startTimer3 = clock();
     auto path3 = bfs(graph, closestNode_start, closestNode_goal);
     clock_t endTimer3 = clock();
     double seconds3 = (double)(endTimer3 - startTimer3) / CLOCKS_PER_SEC;
     if (!path3.empty()) {
-        std::cout << "Путь найден:" << std::endl;
+        std::cout << "РџСѓС‚СЊ РЅР°Р№РґРµРЅ:" << std::endl;
         for (const auto& node : path3) {
             std::cout << "(" << node.lon << ", " << node.lat << ")\n";
         }
     }
     else {
-        std::cout << "Алгоритм не смог найти путь." << std::endl;
+        std::cout << "РџСѓС‚СЊ РЅРµ РЅР°Р№РґРµРЅ." << std::endl;
     }
-    std::cout << "Времени затрачено: " << seconds3 << " секунд\n" << "~~~" << std::endl;
+    std::cout << "Р—Р°С‚СЂР°С‡РµРЅРѕ " << seconds3 << " СЃРµРєСѓРЅРґ\n" << "~~~" << std::endl;
 
 
-    std::cout << "Поиск пути с использованием алгоритма обхода в глубину..." << std::endl;
+    std::cout << "РџРѕРёСЃРє РєСЂР°С‚С‡Р°Р№С€РµРіРѕ РїСѓС‚Рё Р°Р»РіРѕСЂРёС‚РјРѕРј РѕР±С…РѕРґР° РІ РіР»СѓР±РёРЅСѓ..." << std::endl;
     clock_t startTimer4 = clock();
     auto path4 = dfs(graph, closestNode_start, closestNode_goal);
     clock_t endTimer4 = clock();
     double seconds4 = (double)(endTimer4 - startTimer4) / CLOCKS_PER_SEC;
     if (!path4.empty()) {
-        std::cout << "Путь найден:" << std::endl;
+        std::cout << "РџСѓС‚СЊ РЅР°Р№РґРµРЅ:" << std::endl;
         for (const auto& node : path4) {
             std::cout << "(" << node.lon << ", " << node.lat << ")\n";
         }
     }
     else {
-        std::cout << "Алгоритм не смог найти путь." << std::endl;
+        std::cout << "РџСѓС‚СЊ РЅРµ РЅР°Р№РґРµРЅ." << std::endl;
     }
-    std::cout << "Времени затрачено: " << seconds4 << " секунд\n" << "~~~" << std::endl;
+    std::cout << "Р—Р°С‚СЂР°С‡РµРЅРѕ " << seconds4 << " СЃРµРєСѓРЅРґ\n" << "~~~" << std::endl;
 
     return 0;
 }
