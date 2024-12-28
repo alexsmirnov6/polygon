@@ -96,7 +96,7 @@ std::vector<Node> aStar(const Graph& graph, const Node& start, const Node& goal)
     fScore[start] = heuristic(start, goal);
     openSet.push(start);
 
-    while (!openSet.empty()) {
+    while (!openSet.empty()) { // O(log N) — для каждого извлечения из очереди при условии, что очередь содержит N элементов
         Node current = openSet.top();
         openSet.pop();
 
@@ -111,22 +111,22 @@ std::vector<Node> aStar(const Graph& graph, const Node& start, const Node& goal)
             return path;
         }
 
-        if (graph.find(current) == graph.end()) {
+        if (graph.find(current) == graph.end()) { // O(1) — поиск в unordered_map
             continue;
         }
 
-        for (const auto& edge : graph.at(current)) {
+        for (const auto& edge : graph.at(current)) { // O(E) — для каждого соседа (E — количество рёбер)
             double tentativeGScore = gScore[current] + edge.weight;
-            if (!gScore.count(edge.target) || tentativeGScore < gScore[edge.target]) {
-                cameFrom[edge.target] = current;
-                gScore[edge.target] = tentativeGScore;
-                fScore[edge.target] = gScore[edge.target] + heuristic(edge.target, goal);
-                openSet.push(edge.target);
+            if (!gScore.count(edge.target) || tentativeGScore < gScore[edge.target]) { // O(1)
+                cameFrom[edge.target] = current; // O(1)
+                gScore[edge.target] = tentativeGScore; // O(1)
+                fScore[edge.target] = gScore[edge.target] + heuristic(edge.target, goal); // O(1)
+                openSet.push(edge.target); // O(log N) — вставка в priority_queue
             }
         }
     }
 
-    return {};
+    return {}; // O(1)
 }
 
 std::vector<Node> bfs(const Graph& graph, const Node& start, const Node& goal) {
@@ -137,33 +137,33 @@ std::vector<Node> bfs(const Graph& graph, const Node& start, const Node& goal) {
     q.push(start);
     visited[start] = true;
 
-    while (!q.empty()) {
+    while (!q.empty()) { // O(V) — обработка всех вершин в графе
         Node current = q.front();
         q.pop();
 
-        if (current == goal) {
+        if (current == goal) { // O(1) — проверка на достижение цели
             std::vector<Node> path;
-            while (current != start) {
+            while (current != start) { // O(V) — построение пути
                 path.push_back(current);
                 current = cameFrom[current];
             }
             path.push_back(start);
-            std::reverse(path.begin(), path.end());
+            std::reverse(path.begin(), path.end()); // O(V)
             return path;
         }
 
-        if (graph.find(current) != graph.end()) {
-            for (const auto& edge : graph.at(current)) {
-                if (!visited[edge.target]) {
-                    visited[edge.target] = true;
-                    cameFrom[edge.target] = current;
-                    q.push(edge.target);
+        if (graph.find(current) != graph.end()) { // O(1) — поиск в unordered_map
+            for (const auto& edge : graph.at(current)) { // O(E) — обработка всех рёбер
+                if (!visited[edge.target]) { // O(1)
+                    visited[edge.target] = true; // O(1)
+                    cameFrom[edge.target] = current; // O(1)
+                    q.push(edge.target); // O(1)
                 }
             }
         }
     }
 
-    return {};
+    return {}; // O(1)
 }
 
 std::vector<Node> dfsUtil(const Graph& graph, const Node& current, const Node& goal,
@@ -171,28 +171,28 @@ std::vector<Node> dfsUtil(const Graph& graph, const Node& current, const Node& g
     std::unordered_map<Node, Node, NodeHash>& cameFrom) { // ~48 байт
     visited[current] = true;
 
-    if (current == goal) {
+    if (current == goal) { // O(1)
         std::vector<Node> path;
         Node temp = current;
-        while (temp != Node{ -1, -1 }) {
+        while (temp != Node{ -1, -1 }) { // O(V)
             path.push_back(temp);
             temp = cameFrom[temp];
         }
-        std::reverse(path.begin(), path.end());
+        std::reverse(path.begin(), path.end()); // O(V)
         return path;
     }
 
-    if (graph.find(current) != graph.end()) {
-        for (const auto& edge : graph.at(current)) {
-            if (!visited[edge.target]) {
-                cameFrom[edge.target] = current;
-                auto path = dfsUtil(graph, edge.target, goal, visited, cameFrom);
-                if (!path.empty()) return path;
+    if (graph.find(current) != graph.end()) { // O(1)
+        for (const auto& edge : graph.at(current)) { // O(E)
+            if (!visited[edge.target]) { // O(1)
+                cameFrom[edge.target] = current; // O(1)
+                auto path = dfsUtil(graph, edge.target, goal, visited, cameFrom); // рекурсивный вызов
+                if (!path.empty()) return path; // O(1)
             }
         }
     }
 
-    return {};
+    return {}; // O(1)
 }
 
 std::vector<Node> dfs(const Graph& graph, const Node& start, const Node& goal) {
@@ -208,41 +208,41 @@ std::vector<Node> dijkstra(const Graph& graph, const Node& start, const Node& go
     auto compare = [&](const Node& lhs, const Node& rhs) { return dist[lhs] > dist[rhs]; }; // 1 байт
     std::priority_queue<Node, std::vector<Node>, decltype(compare)> pq(compare); // ~24 байта
 
-    for (const auto& pair : graph) {
+    for (const auto& pair : graph) { // O(V) — инициализация всех расстояний
         dist[pair.first] = std::numeric_limits<double>::infinity();
     }
 
     dist[start] = 0;
     pq.push(start);
 
-    while (!pq.empty()) {
+    while (!pq.empty()) { // O(log V) — извлечение минимального элемента
         Node current = pq.top();
         pq.pop();
 
-        if (current == goal) {
+        if (current == goal) { // O(1)
             std::vector<Node> path;
-            while (current != start) {
+            while (current != start) { // O(V) — построение пути
                 path.push_back(current);
                 current = cameFrom[current];
             }
             path.push_back(start);
-            std::reverse(path.begin(), path.end());
+            std::reverse(path.begin(), path.end()); // O(V)
             return path;
         }
 
-        if (graph.find(current) != graph.end()) {
-            for (const auto& edge : graph.at(current)) {
+        if (graph.find(current) != graph.end()) { // O(1)
+            for (const auto& edge : graph.at(current)) { // O(E)
                 double newDist = dist[current] + edge.weight;
-                if (newDist < dist[edge.target]) {
-                    dist[edge.target] = newDist;
-                    cameFrom[edge.target] = current;
-                    pq.push(edge.target);
+                if (newDist < dist[edge.target]) { // O(1)
+                    dist[edge.target] = newDist; // O(1)
+                    cameFrom[edge.target] = current; // O(1)
+                    pq.push(edge.target); // O(log V) — вставка в priority_queue
                 }
             }
         }
     }
 
-    return {};
+    return {}; // O(1)
 }
 
 int main() {
