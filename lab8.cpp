@@ -38,7 +38,7 @@ struct NodeHash {
 using Graph = std::unordered_map<Node, std::vector<Edge>, NodeHash>;
 
 double heuristic(const Node& a, const Node& b) {
-    return std::sqrt((a.lon - b.lon) * (a.lon - b.lon) + (a.lat - b.lat) * (a.lat - b.lat));
+    return std::sqrt(std::pow((a.lon - b.lon), 2) + std::pow((a.lat - b.lat), 2));
 }
 
 // Поиск ближайшей ноды
@@ -78,6 +78,7 @@ Graph parseGraph(const std::string& filename) {
             double weight;
             sscanf_s(edgesPart.c_str(), "%lf,%lf,%lf", &target.lon, &target.lat, &weight);
             graph[parent].push_back({ target, weight });
+            graph[target].push_back({ parent, weight });
         }
     }
 
