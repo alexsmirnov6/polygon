@@ -245,7 +245,35 @@ std::vector<Node> dijkstra(const Graph& graph, const Node& start, const Node& go
     return {}; // O(1)
 }
 
+void testPathfindingAlgorithms() {
+    // Пример графа
+    Graph graph;
+
+    graph[Node{0, 0}] = { {Node{0, 1}, 1.0}, {Node{1, 0}, 1.0} };
+    graph[Node{0, 1}] = { {Node{0, 0}, 1.0}, {Node{1, 1}, 1.0} };
+    graph[Node{1, 0}] = { {Node{0, 0}, 1.0}, {Node{1, 1}, 1.0} };
+    graph[Node{1, 1}] = { {Node{0, 1}, 1.0}, {Node{1, 0}, 1.0} };
+
+    Node start = Node{0, 0};
+    Node goal = Node{1, 1};
+
+    // Применяем алгоритмы поиска пути
+    std::vector<Node> aStarPath = aStar(graph, start, goal);
+    std::vector<Node> bfsPath = bfs(graph, start, goal);
+    std::vector<Node> dfsPath = dfs(graph, start, goal);
+    std::vector<Node> dijkstraPath = dijkstra(graph, start, goal);
+
+    // Проверяем, что все пути корректны
+    assert(isValidPath(graph, aStarPath));
+    assert(isValidPath(graph, bfsPath));
+    assert(isValidPath(graph, dfsPath));
+    assert(isValidPath(graph, dijkstraPath));
+
+    std::cout << "Все алгоритмы прошли тесты!" << std::endl;
+}
+
 int main() {
+    testPathfindingAlgorithms();
     Graph graph = parseGraph("spb_graph.txt");
 
     Node start{ 30.222172, 59.936539 }; // Рандомная локация
